@@ -1,0 +1,618 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stellar Forge — Visión del juego completo</title>
+<style>
+  /* ================================================================
+     STELLAR FORGE — VISION MOCKUP
+     Design system: design/art/art-bible.md (Epoch palettes, chamfer
+     grammar, hexagon Forge) + design/ux/hud.md / ascension-dialog.md /
+     dm-upgrade-tree.md. Annotations in Spanish; in-game strings in
+     English (product language).
+     ================================================================ */
+  :root {
+    --void: #07020d;          /* epoch-3 deep void */
+    --void-1: #0d0f14;        /* epoch-1 void black */
+    --dm-violet: #1a0a2e;     /* system layer / DM atmosphere */
+    --panel: #14101f;
+    --nebula: #9b5de5;        /* epoch-3 interactive accent */
+    --stellar: #f8f9ff;       /* epoch-3 text */
+    --gold: #ffe156;          /* DM currency / constellation */
+    --plasma: #ffd166;        /* milestone reward */
+    --steel: #8ba7bf;         /* utility / annotations */
+    --ice: #5b8dd9;           /* epoch-1 accent */
+    --amber: #e8742a;         /* epoch-2 accent / tap pulse */
+    --chamfer: polygon(14px 0, 100% 0, 100% 100%, 0 100%, 0 14px);
+    --chamfer-sm: polygon(9px 0, 100% 0, 100% 100%, 0 100%, 0 9px);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--void);
+    color: var(--stellar);
+    font-family: 'Avenir Next', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.55;
+    overflow-x: hidden;
+  }
+  #stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  main { position: relative; z-index: 1; }
+  section { padding: 96px 24px; max-width: 1080px; margin: 0 auto; }
+  h1, h2, h3 { line-height: 1.15; text-wrap: balance; margin: 0; }
+  p { max-width: 62ch; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 0.34em; color: var(--steel);
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+  .eyebrow b { color: var(--gold); font-weight: 600; }
+  .lede { color: #c9c4da; font-size: 17px; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ------------------------------------------------ hero ---------- */
+  .hero { min-height: 92vh; display: flex; flex-direction: column; justify-content: center; padding-top: 72px; }
+  .hero-brand { display: flex; align-items: center; gap: 12px; letter-spacing: 0.3em; color: var(--steel); font-size: 14px; }
+  .hero-brand .hex { color: var(--nebula); font-size: 20px; }
+  .hero h1 {
+    margin: 22px 0 16px; font-size: clamp(38px, 7vw, 74px); font-weight: 650; letter-spacing: 0.01em;
+  }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero .lede { font-size: 19px; }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+  .tag {
+    font-size: 11.5px; letter-spacing: 0.14em; color: var(--steel);
+    border: 1px solid rgba(139,167,191,.4); padding: 6px 12px; clip-path: var(--chamfer-sm);
+  }
+  .tag.gold { color: var(--gold); border-color: rgba(255,225,86,.5); }
+  .scroll-cue { margin-top: 56px; color: var(--steel); font-size: 12px; letter-spacing: .28em; }
+
+  /* --------------------------------------------- screen frames ----- */
+  .screen {
+    position: relative; background: linear-gradient(180deg, rgba(20,16,31,.92), rgba(13,10,22,.96));
+    border: 1px solid rgba(139,167,191,.22); clip-path: var(--chamfer);
+    padding: 22px; margin-top: 34px;
+  }
+  .screen-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .screen-title { font-size: 12px; letter-spacing: .26em; color: var(--steel); text-transform: uppercase; }
+  .screen-sys { font-size: 11px; letter-spacing: .18em; color: var(--nebula); }
+  .note { font-size: 13px; color: var(--steel); max-width: 66ch; }
+  .note b { color: var(--stellar); font-weight: 600; }
+  .callouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-top: 22px; }
+  .callout { border-left: 2px solid var(--nebula); padding: 2px 0 2px 14px; }
+  .callout.gold { border-color: var(--gold); }
+  .callout.ice { border-color: var(--ice); }
+  .callout h4 { margin: 0 0 4px; font-size: 13.5px; letter-spacing: .06em; }
+  .callout p { margin: 0; font-size: 12.5px; color: var(--steel); }
+
+  /* ------------------------------------------------ HUD mock ------- */
+  .hud { background: radial-gradient(120% 90% at 30% 20%, #150b26 0%, var(--void) 60%); min-height: 540px; position: relative; overflow: hidden; }
+  .hud-a { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 4px 6px 14px; }
+  .hud-brandline { display: flex; gap: 8px; align-items: center; font-size: 11px; letter-spacing: .22em; color: var(--steel); }
+  .hud-brandline .hex { color: var(--nebula); }
+  .readout { text-align: center; border-top: 1px solid rgba(139,167,191,.5); border-bottom: 1px solid rgba(139,167,191,.5); padding: 5px 26px; }
+  .readout .v { font-size: 30px; font-weight: 650; }
+  .readout .r { font-size: 13px; color: var(--steel); }
+  .hud-icons { justify-self: end; display: flex; gap: 14px; color: var(--steel); font-size: 15px; }
+  .hud-body { display: grid; grid-template-columns: 1.2fr .9fr; gap: 18px; }
+  .hud-world { position: relative; min-height: 380px; }
+  .forge3 {
+    position: absolute; left: 50%; top: 52%; transform: translate(-50%,-50%);
+    width: 168px; height: 148px; display: grid; place-items: center;
+  }
+  .forge3 svg { overflow: visible; }
+  .asc-badge {
+    position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%);
+    display: flex; gap: 10px; align-items: center; padding: 9px 16px;
+    border: 1px solid rgba(255,225,86,.65); color: var(--gold);
+    clip-path: var(--chamfer-sm); font-size: 13px; letter-spacing: .08em;
+    background: rgba(26,10,46,.55); animation: badgepulse 2.6s ease-in-out infinite;
+    white-space: nowrap;
+  }
+  @keyframes badgepulse { 0%,100% { opacity: .82; } 50% { opacity: 1; } }
+  .dm-chip {
+    position: absolute; right: 4%; top: 4%; font-size: 12.5px; color: var(--gold);
+    border: 1px solid rgba(255,225,86,.4); padding: 6px 11px; clip-path: var(--chamfer-sm);
+    background: rgba(26,10,46,.5);
+  }
+  .hud-c { display: flex; flex-direction: column; gap: 8px; }
+  .buymode { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+  .bm { text-align: center; font-size: 12px; font-weight: 650; letter-spacing: .1em; padding: 7px 0; border: 1px solid rgba(139,167,191,.5); color: var(--steel); clip-path: var(--chamfer-sm); }
+  .bm.on { background: var(--nebula); border-color: var(--nebula); color: var(--void); }
+  .grow { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 10px; padding: 9px 11px; background: rgba(26,20,40,.7); border: 1px solid rgba(139,167,191,.16); clip-path: var(--chamfer-sm); }
+  .grow .g { color: var(--nebula); font-size: 18px; text-align: center; }
+  .grow .nm { font-size: 13px; font-weight: 600; }
+  .grow .mt { font-size: 11px; color: var(--steel); }
+  .grow .mt .mm { color: var(--plasma); }
+  .grow .b { font-size: 11px; font-weight: 700; padding: 8px 10px; clip-path: var(--chamfer-sm); background: var(--nebula); color: var(--void); white-space: nowrap; }
+  .grow .b.out { background: transparent; border: 1px solid rgba(139,167,191,.55); color: var(--steel); }
+  .grow .mgr { color: var(--plasma); margin-left: 6px; }
+
+  /* ------------------------------------------------ epochs --------- */
+  .epochs { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 34px; }
+  .epoch { padding: 22px 20px 20px; clip-path: var(--chamfer); border: 1px solid rgba(139,167,191,.2); min-height: 190px; display: flex; flex-direction: column; gap: 8px; }
+  .epoch .k { font-size: 11px; letter-spacing: .3em; }
+  .epoch h3 { font-size: 20px; }
+  .epoch p { font-size: 13px; margin: 0; }
+  .ep1 { background: linear-gradient(170deg, #10141c, #0d0f14); }
+  .ep1 .k { color: var(--ice); } .ep1 p { color: #aebdcc; }
+  .ep2 { background: linear-gradient(170deg, #1d1208, #140c06); }
+  .ep2 .k { color: var(--amber); } .ep2 p { color: #d8bda6; }
+  .ep3 { background: linear-gradient(170deg, #190f2b, #0a0512); }
+  .ep3 .k { color: var(--nebula); } .ep3 p { color: #c9bce0; }
+  .swatches { display: flex; gap: 6px; margin-top: auto; }
+  .sw { width: 26px; height: 10px; }
+
+  /* --------------------------------------------- ascension --------- */
+  .asc-mock { display: grid; place-items: center; padding: 46px 18px; background: radial-gradient(80% 90% at 50% 10%, #170c28 0%, var(--void) 70%); }
+  .dialog {
+    width: min(430px, 100%); background: rgba(13,8,24,.92); border: 1px solid rgba(155,93,229,.45);
+    clip-path: var(--chamfer); padding: 26px 26px 30px; text-align: center;
+  }
+  .dialog h3 { font-size: 21px; letter-spacing: .05em; }
+  .dialog .dm { font-size: 34px; color: var(--gold); font-weight: 650; margin: 12px 0 2px; }
+  .dialog .dm small { font-size: 14px; color: var(--steel); font-weight: 400; letter-spacing: .06em; }
+  .keeps { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0 24px; text-align: left; font-size: 12.5px; }
+  .keeps div { border: 1px solid rgba(139,167,191,.25); padding: 10px 12px; clip-path: var(--chamfer-sm); }
+  .keeps b { display: block; font-size: 11px; letter-spacing: .18em; margin-bottom: 6px; }
+  .keeps .keep b { color: var(--gold); } .keeps .lose b { color: var(--steel); }
+  .keeps ul { margin: 0; padding-left: 16px; color: var(--steel); }
+  #holdbtn {
+    position: relative; width: 100%; padding: 15px 0; font: inherit; font-weight: 700; letter-spacing: .14em;
+    color: var(--void); background: var(--gold); border: 0; clip-path: var(--chamfer-sm); cursor: pointer;
+    transition: transform .08s ease;
+  }
+  #holdbtn:active { transform: scale(.985); }
+  #holdfill { position: absolute; inset: 0; width: 0%; background: rgba(255,255,255,.5); }
+  #holdbtn span { position: relative; }
+  .dialog .esc { margin-top: 12px; font-size: 12px; color: var(--steel); }
+  #ascflash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 50; }
+
+  /* ------------------------------------------------ DM tree -------- */
+  .tree-wrap { position: relative; background: radial-gradient(90% 100% at 50% 0%, var(--dm-violet) 0%, #060310 75%); clip-path: var(--chamfer); border: 1px solid rgba(155,93,229,.35); }
+  #tree { display: block; width: 100%; height: 420px; cursor: pointer; }
+  .tree-panel {
+    position: absolute; right: 16px; bottom: 16px; width: min(280px, 60%);
+    background: rgba(10,5,18,.9); border: 1px solid rgba(255,225,86,.4); clip-path: var(--chamfer-sm);
+    padding: 14px 16px; font-size: 12.5px;
+  }
+  .tree-panel h4 { margin: 0 0 4px; color: var(--gold); font-size: 14px; letter-spacing: .06em; }
+  .tree-panel p { margin: 0 0 8px; color: var(--steel); }
+  .tree-panel .cost { color: var(--stellar); font-weight: 600; }
+
+  /* ------------------------------------------------- shop ---------- */
+  .shop { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-top: 30px; }
+  .pack { background: linear-gradient(175deg, rgba(26,16,44,.9), rgba(13,8,24,.95)); border: 1px solid rgba(139,167,191,.25); clip-path: var(--chamfer); padding: 20px; display: flex; flex-direction: column; gap: 6px; }
+  .pack .qc { font-size: 26px; color: var(--gold); font-weight: 650; }
+  .pack .nm2 { font-size: 13px; letter-spacing: .1em; color: var(--stellar); }
+  .pack p { font-size: 12.5px; color: var(--steel); margin: 0 0 12px; }
+  .pack .buy { margin-top: auto; text-align: center; font-size: 12px; font-weight: 700; letter-spacing: .1em; padding: 10px 0; background: var(--nebula); color: var(--void); clip-path: var(--chamfer-sm); }
+  .pack.feat { border-color: rgba(255,225,86,.55); }
+  .pack.feat .buy { background: var(--gold); }
+  .pack .rib { font-size: 10px; letter-spacing: .22em; color: var(--gold); }
+  .ethics { margin-top: 22px; border-left: 2px solid var(--gold); padding-left: 14px; font-size: 13px; color: var(--steel); max-width: 70ch; }
+  .ethics b { color: var(--stellar); }
+
+  /* ------------------------------------------------ status --------- */
+  .built { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 30px; }
+  .bcard { border: 1px solid rgba(139,167,191,.22); clip-path: var(--chamfer); padding: 18px; background: rgba(13,15,20,.75); }
+  .bcard h4 { margin: 0 0 8px; font-size: 12px; letter-spacing: .22em; }
+  .bcard.live h4 { color: #7fd6a4; }
+  .bcard.next h4 { color: var(--plasma); }
+  .bcard.later h4 { color: var(--steel); }
+  .bcard ul { margin: 0; padding-left: 16px; font-size: 13px; color: #c2bdd2; }
+  .bcard li { margin: 3px 0; }
+  .kpis { display: flex; flex-wrap: wrap; gap: 26px; margin-top: 26px; }
+  .kpi .n { font-size: 30px; font-weight: 650; color: var(--stellar); }
+  .kpi .l { font-size: 11px; letter-spacing: .2em; color: var(--steel); text-transform: uppercase; }
+
+  footer { padding: 60px 24px 80px; text-align: center; color: var(--steel); font-size: 12px; letter-spacing: .12em; }
+  footer .hex { color: var(--nebula); }
+
+  /* ---------------------------------------------- rail nav --------- */
+  .rail { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 12px; z-index: 20; }
+  .rail a { width: 9px; height: 9px; border: 1px solid var(--steel); transform: rotate(45deg); display: block; }
+  .rail a:hover, .rail a.on { background: var(--gold); border-color: var(--gold); }
+  @media (max-width: 760px) {
+    .rail { display: none; }
+    .hud-body { grid-template-columns: 1fr; }
+    section { padding: 72px 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+</style>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+<div id="ascflash" aria-hidden="true"></div>
+
+<nav class="rail" aria-label="Secciones">
+  <a href="#vision" title="Visión"></a>
+  <a href="#hud" title="HUD"></a>
+  <a href="#epocas" title="Épocas"></a>
+  <a href="#ascension" title="Ascensión"></a>
+  <a href="#darkmatter" title="Dark Matter"></a>
+  <a href="#shop" title="Web shop"></a>
+  <a href="#estado" title="Estado"></a>
+</nav>
+
+<main>
+  <!-- ============================================== HERO ========== -->
+  <section class="hero" id="vision">
+    <div class="hero-brand"><span class="hex">⬡</span> STELLAR FORGE · GAME VISION</div>
+    <h1>De un dron minero<br>a un <em>enjambre de Dyson</em>.</h1>
+    <p class="lede">
+      Un idle/incremental galáctico que corre al instante en cualquier navegador:
+      toca la Forja, compra generadores, automatiza tu imperio y colápsalo en una
+      singularidad para renacer más fuerte. Esta página muestra la <b>interfaz completa
+      del juego terminado</b> — cada pantalla sigue las especificaciones reales de UX y
+      la biblia de arte del proyecto.
+    </p>
+    <div class="hero-tags">
+      <span class="tag gold">MOCKUP DE VISIÓN — experiencia objetivo</span>
+      <span class="tag">Web-first · sin descargas</span>
+      <span class="tag">Monetización D2C ética</span>
+      <span class="tag">Servidor autoritativo</span>
+    </div>
+    <div class="scroll-cue">▾ RECORRE LAS PANTALLAS</div>
+  </section>
+
+  <!-- ============================================== HUD =========== -->
+  <section id="hud">
+    <div class="eyebrow">Pantalla principal · <b>partida avanzada (Época 3)</b></div>
+    <h2>El HUD completo en el late game</h2>
+    <p class="note" style="margin-top:12px">
+      Lo que hoy ves en la demo jugable es la Época 1 (acero frío, un asteroide).
+      Así se ve la misma pantalla meses después: números en notación científica,
+      los 9 generadores con <b>managers automáticos</b>, la insignia de Ascensión
+      activa y la entrada al árbol de Dark Matter.
+    </p>
+
+    <div class="screen hud">
+      <div class="screen-bar">
+        <span class="screen-title">Gameplay HUD — Epoch 3 · Stellar Engineering</span>
+        <span class="screen-sys">E3 · E4 · E7</span>
+      </div>
+      <div class="hud-a">
+        <div class="hud-brandline"><span class="hex">⬡</span> STELLAR FORGE</div>
+        <div class="readout">
+          <div class="v num" id="bigcredits">3.47 e+21 Cr</div>
+          <div class="r num">▸ 8.92 e+18 Cr/s</div>
+        </div>
+        <div class="hud-icons"><span title="Save OK">◍</span><span title="Settings">⚙</span></div>
+      </div>
+      <div class="hud-body">
+        <div class="hud-world">
+          <div class="dm-chip num">✦ 2,340 DM</div>
+          <div class="forge3">
+            <svg width="168" height="150" viewBox="-84 -75 168 150">
+              <polygon points="84,0 42,72.7 -42,72.7 -84,0 -42,-72.7 42,-72.7"
+                       fill="rgba(155,93,229,.10)" stroke="#9b5de5" stroke-width="2.5"/>
+              <polygon points="58,0 29,50.2 -29,50.2 -58,0 -29,-50.2 29,-50.2"
+                       fill="none" stroke="#f8f9ff" stroke-opacity=".55" stroke-width="1.2"/>
+              <circle r="16" fill="none" stroke="#ffe156" stroke-opacity=".8" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="asc-badge">✦ ASCEND — mint <b class="num">+1,180 DM</b></div>
+        </div>
+        <div class="hud-c">
+          <div class="buymode"><span class="bm">×1</span><span class="bm">×10</span><span class="bm on">×MAX</span></div>
+          <div class="grow"><span class="g">◐</span><span><span class="nm">Planetary Colony <span class="mgr" title="Manager activo">Ⓜ</span></span><br><span class="mt num">×212 · 4.1 e+15 Cr/s · <span class="mm">→250 ×2</span></span></span><span class="b num">MAX ×38 · 9.2 e+19</span></div>
+          <div class="grow"><span class="g">✦</span><span><span class="nm">Star Lifter <span class="mgr">Ⓜ</span></span><br><span class="mt num">×97 · 8.8 e+16 Cr/s · <span class="mm">→100 ×2</span></span></span><span class="b num">MAX ×6 · 1.4 e+20</span></div>
+          <div class="grow"><span class="g">❂</span><span><span class="nm">Dyson Swarm <span class="mgr">Ⓜ</span></span><br><span class="mt num">×41 · 7.9 e+17 Cr/s · <span class="mm">→50 ×2</span></span></span><span class="b out num">MAX ×0</span></div>
+          <div class="grow" style="opacity:.75"><span class="g">⟨⟩</span><span><span class="nm">Upgrades</span><br><span class="mt">3 disponibles · <span class="mm">+2.1 e+17 Cr/s proyectado</span></span></span><span class="b">OPEN</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callouts">
+      <div class="callout"><h4>Lectura "instrumento de precisión"</h4><p>Créditos con marco de reglas y cifras tabulares; notación científica a partir de 1e21 (sistema A3 ya implementado y testeado).</p></div>
+      <div class="callout gold"><h4>Insignia de Ascensión</h4><p>Aparece solo cuando ascender vale la pena: invitación ganada, nunca un nag. Muestra el Dark Matter que se acuñaría.</p></div>
+      <div class="callout"><h4>Managers Ⓜ</h4><p>Automatización por tier comprada con upgrades: el imperio produce y compra solo — el "zumbido silencioso" del diseño.</p></div>
+      <div class="callout ice"><h4>Estados geométricos</h4><p>Botón lleno = comprable · contorno = no alcanzable · guiones = bloqueado. Nunca solo color (accesibilidad daltónica).</p></div>
+    </div>
+  </section>
+
+  <!-- ============================================== EPOCHS ======== -->
+  <section id="epocas">
+    <div class="eyebrow">Progresión visual · <b>la escalada que asombra</b></div>
+    <h2>Tres épocas, tres paletas</h2>
+    <p class="note" style="margin-top:12px">
+      El mundo entero — fondo, Forja, acentos de la UI — evoluciona con tu imperio.
+      La escalada visual es también el gancho de marketing de los anuncios.
+    </p>
+    <div class="epochs">
+      <article class="epoch ep1">
+        <div class="k">ÉPOCA 1 · 6500–9000 K</div>
+        <h3>Cold Genesis</h3>
+        <p>Un dron solitario sobre un asteroide estéril. Acero frío, azul hielo, vacío indiferente. <b>Es la demo jugable de hoy.</b></p>
+        <div class="swatches"><span class="sw" style="background:#0d0f14"></span><span class="sw" style="background:#2a2c31"></span><span class="sw" style="background:#5b8dd9"></span><span class="sw" style="background:#8ba7bf"></span></div>
+      </article>
+      <article class="epoch ep2">
+        <div class="k">ÉPOCA 2 · 2200–3500 K</div>
+        <h3>Industrial Fire</h3>
+        <p>El universo se ilumina con máquinas que tú construiste: refinerías, reactores, astilleros orbitales. El calor es poder.</p>
+        <div class="swatches"><span class="sw" style="background:#e8742a"></span><span class="sw" style="background:#f0a500"></span><span class="sw" style="background:#ffd166"></span><span class="sw" style="background:#f5f0e8"></span></div>
+      </article>
+      <article class="epoch ep3">
+        <div class="k">ÉPOCA 3 · mezcla estelar</div>
+        <h3>Stellar Engineering</h3>
+        <p>Ya no construyes fábricas: rediseñas sistemas estelares. Púrpura nebular, blanco estelar, una escala inquietante.</p>
+        <div class="swatches"><span class="sw" style="background:#9b5de5"></span><span class="sw" style="background:#f8f9ff"></span><span class="sw" style="background:#ffe156"></span><span class="sw" style="background:#07020d"></span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================================== ASCENSION ===== -->
+  <section id="ascension">
+    <div class="eyebrow">El momento clave · <b>pruébalo: mantén pulsado</b></div>
+    <h2>Ascensión — colapsar para renacer</h2>
+    <p class="note" style="margin-top:12px">
+      El corazón del meta-juego: sacrificas tu imperio entero a cambio de
+      <b>Dark Matter permanente</b>. El diálogo exige mantener pulsado (nunca un
+      click accidental) y deja claro qué se conserva y qué se pierde.
+      <b>El botón de abajo funciona</b> — mantenlo pulsado.
+    </p>
+    <div class="screen asc-mock">
+      <div class="screen-bar" style="position:absolute;top:16px;left:22px;right:22px">
+        <span class="screen-title">Ascension Dialog</span><span class="screen-sys">E5 · C2</span>
+      </div>
+      <div class="dialog">
+        <h3>COLLAPSE YOUR EMPIRE?</h3>
+        <div class="dm num">✦ +1,180 DM <small>≈ +23.6% producción global permanente</small></div>
+        <div class="keeps">
+          <div class="keep"><b>YOU KEEP</b><ul><li>Dark Matter + árbol DM</li><li>Modo de compra</li><li>Logros e hitos</li></ul></div>
+          <div class="lose"><b>YOU LOSE</b><ul><li>Créditos y generadores</li><li>Upgrades lineales</li><li>Progreso de la partida</li></ul></div>
+        </div>
+        <button id="holdbtn" type="button" aria-label="Mantén pulsado para ascender">
+          <div id="holdfill"></div>
+          <span id="holdlabel">HOLD TO ASCEND</span>
+        </button>
+        <div class="esc">Suelta para cancelar · Esc cierra sin coste</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== DM TREE ======= -->
+  <section id="darkmatter">
+    <div class="eyebrow">Meta-progresión · <b>elecciones permanentes</b></div>
+    <h2>El árbol de Dark Matter</h2>
+    <p class="note" style="margin-top:12px">
+      Un mapa-constelación de mejoras permanentes: multiplicadores globales,
+      arranques rápidos, extensión del tope offline, persistencia de managers.
+      Conexiones en oro sobre violeta profundo — la "capa de sistema" donde
+      gestionas el imperio en vez de observarlo. <b>Toca los nodos.</b>
+    </p>
+    <div class="screen" style="padding:0">
+      <div class="tree-wrap">
+        <canvas id="tree" aria-label="Árbol de mejoras de Dark Matter (maqueta interactiva)"></canvas>
+        <div class="tree-panel" id="treepanel">
+          <h4>Singularity Core</h4>
+          <p>+2% de producción global por punto de DM invertido.</p>
+          <div class="cost num">Nivel 12 · siguiente: 45 DM</div>
+        </div>
+      </div>
+    </div>
+    <div class="callouts">
+      <div class="callout gold"><h4>Nodo poseído</h4><p>Relleno dorado; su constelación irradia hacia los vecinos desbloqueables.</p></div>
+      <div class="callout"><h4>Nodo disponible</h4><p>Contorno nebular con coste en DM; compra = decisión permanente entre ramas rivales.</p></div>
+      <div class="callout ice"><h4>Nodo distante</h4><p>Atenuado hasta que su rama se acerque — profundidad opcional, jamás obligatoria.</p></div>
+    </div>
+  </section>
+
+  <!-- ============================================== SHOP ========== -->
+  <section id="shop">
+    <div class="eyebrow">Monetización · <b>web shop directo (D2C)</b></div>
+    <h2>Quantum Cores — pagar para acelerar, nunca para desbloquear diversión</h2>
+    <p class="note" style="margin-top:12px">
+      Venta directa en el navegador (Merchant of Record), quedándonos ~95% del
+      ingreso frente a ~70% en las stores. El diseño de ofertas sigue las
+      líneas rojas del proyecto.
+    </p>
+    <div class="shop">
+      <article class="pack"><span class="qc num">◈ 500</span><span class="nm2">QUANTUM CORES</span><p>Time-skips y multiplicadores temporales para sprints de progreso.</p><div class="buy">USD 4.99</div></article>
+      <article class="pack feat"><span class="rib">MÁS POPULAR</span><span class="qc num">◈ 2,800</span><span class="nm2">QUANTUM CORES +10%</span><p>El pack del jugador habitual: mejor ratio, sin presión de caducidad.</p><div class="buy">USD 19.99</div></article>
+      <article class="pack"><span class="qc num">⟴ FORGE PASS</span><span class="nm2">TEMPORADA 1 · 30 DÍAS</span><p>Tope offline 4h → 24h, doblador "Welcome Back" y cosmética de Forja.</p><div class="buy">USD 9.99 / mes</div></article>
+      <article class="pack"><span class="qc num">◉ SUPPORTER</span><span class="nm2">COSMÉTICOS</span><p>Skins de Forja y estelas de época. Cero impacto en producción.</p><div class="buy">USD 2.99+</div></article>
+    </div>
+    <div class="ethics">
+      <b>Guardarraíles innegociables:</b> sin pay-to-win que rompa el loop · probabilidades transparentes ·
+      sin dark patterns ni castigos por no pagar · fricción de gasto sensata · el Dark Matter
+      <b>nunca</b> se vende por dinero.
+    </div>
+  </section>
+
+  <!-- ============================================== ESTADO ======== -->
+  <section id="estado">
+    <div class="eyebrow">Del mockup a la realidad · <b>estado verificable del proyecto</b></div>
+    <h2>Qué existe hoy y qué sigue</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="n num">792</div><div class="l">tests unitarios en verde</div></div>
+      <div class="kpi"><div class="n num">10</div><div class="l">ADRs de arquitectura</div></div>
+      <div class="kpi"><div class="n num">22</div><div class="l">GDDs de sistemas</div></div>
+      <div class="kpi"><div class="n num">&lt;500 KB</div><div class="l">bundle inicial (gzip)</div></div>
+    </div>
+    <div class="built">
+      <div class="bcard live">
+        <h4>● EN LA DEMO JUGABLE (código real)</h4>
+        <ul>
+          <li>Motor económico completo: tap, acumulación por ticks, compra ×1/×10/×MAX</li>
+          <li>9 tiers con curvas exponenciales e hitos ×2</li>
+          <li>Números grandes (hasta 1e308+) y formato científico</li>
+          <li>Bus de eventos, reloj fijo, input multi-dispositivo</li>
+        </ul>
+      </div>
+      <div class="bcard next">
+        <h4>◐ SIGUIENTE (diseño cerrado, listo para construir)</h4>
+        <ul>
+          <li>Upgrades y automatización (managers)</li>
+          <li>Ascensión + Dark Matter + árbol de mejoras</li>
+          <li>Guardado local → progresión offline</li>
+          <li>Épocas visuales 2 y 3, celebraciones de hitos</li>
+        </ul>
+      </div>
+      <div class="bcard later">
+        <h4>○ CAMINO AL LANZAMIENTO</h4>
+        <ul>
+          <li>Servidor autoritativo + guardado en la nube</li>
+          <li>Web shop D2C (Merchant of Record) + Quantum Cores</li>
+          <li>Analítica de funnel + UA en Meta</li>
+          <li>LiveOps: eventos, temporadas, leaderboards</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="hex">⬡</span> STELLAR FORGE · vision mockup sobre las specs reales
+    (design/ux · design/art) · las cifras de juego son ilustrativas
+  </footer>
+</main>
+
+<script>
+  // ------------------------------------------------ starfield ------
+  (() => {
+    const cv = document.getElementById('stars');
+    const cx = cv.getContext('2d');
+    let seed = 7;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+    const draw = () => {
+      const w = cv.width = innerWidth * devicePixelRatio;
+      const h = cv.height = innerHeight * devicePixelRatio;
+      cx.clearRect(0, 0, w, h);
+      seed = 7;
+      const n = Math.round((innerWidth * innerHeight) / 6500);
+      for (let i = 0; i < n; i++) {
+        const x = rnd() * w, y = rnd() * h, r = (0.4 + rnd() * 1.2) * devicePixelRatio;
+        const roll = rnd();
+        cx.fillStyle = roll < .7 ? 'rgba(248,249,255,' : roll < .9 ? 'rgba(139,167,191,' : 'rgba(155,93,229,';
+        cx.fillStyle += (0.15 + rnd() * 0.6) + ')';
+        cx.beginPath(); cx.arc(x, y, r, 0, 6.2832); cx.fill();
+      }
+    };
+    draw();
+    addEventListener('resize', draw);
+  })();
+
+  // ------------------------------------------- credits ticker ------
+  (() => {
+    const el = document.getElementById('bigcredits');
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let mant = 3.47;
+    setInterval(() => {
+      mant += 0.0089;
+      if (mant >= 10) mant = 1.0;
+      el.textContent = mant.toFixed(2) + ' e+21 Cr';
+    }, 250); // misma cadencia ~4 Hz que el HUD real
+  })();
+
+  // ------------------------------------------ hold to ascend -------
+  (() => {
+    const btn = document.getElementById('holdbtn');
+    const fill = document.getElementById('holdfill');
+    const label = document.getElementById('holdlabel');
+    const flash = document.getElementById('ascflash');
+    const HOLD_MS = 1200;
+    let t0 = null, raf = null;
+    const reset = () => { cancelAnimationFrame(raf); t0 = null; fill.style.width = '0%'; };
+    const step = (now) => {
+      if (t0 === null) return;
+      const p = Math.min(1, (now - t0) / HOLD_MS);
+      fill.style.width = (p * 100) + '%';
+      if (p >= 1) { reset(); ascend(); return; }
+      raf = requestAnimationFrame(step);
+    };
+    const start = (e) => { e.preventDefault(); if (t0 !== null) return; t0 = performance.now(); raf = requestAnimationFrame(step); };
+    const ascend = () => {
+      label.textContent = '✦ +1,180 DM MINTED';
+      flash.style.transition = 'opacity .25s ease-in';
+      flash.style.opacity = '0.95';
+      setTimeout(() => {
+        flash.style.transition = 'opacity 1.1s ease-out';
+        flash.style.opacity = '0';
+        setTimeout(() => { label.textContent = 'HOLD TO ASCEND'; }, 1400);
+      }, 260);
+    };
+    btn.addEventListener('pointerdown', start);
+    addEventListener('pointerup', reset);
+    btn.addEventListener('pointerleave', reset);
+    btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (t0 === null) { t0 = performance.now(); raf = requestAnimationFrame(step); } } });
+    btn.addEventListener('keyup', reset);
+  })();
+
+  // ------------------------------------------- DM tree canvas ------
+  (() => {
+    const cv = document.getElementById('tree');
+    const panel = document.getElementById('treepanel');
+    const cx = cv.getContext('2d');
+    // owned | avail | far  — layout in unit coords (x,y in [0,1])
+    const nodes = [
+      { x: .50, y: .78, s: 'owned', n: 'Singularity Core', d: '+2% de producción global por punto de DM.', c: 'Nivel 12 · siguiente: 45 DM' },
+      { x: .34, y: .58, s: 'owned', n: 'Head Start I', d: 'Empiezas cada run con 500 Cr.', c: 'Adquirido' },
+      { x: .66, y: .58, s: 'owned', n: 'Deep Reserves', d: 'Tope offline 4 h → 8 h.', c: 'Adquirido' },
+      { x: .22, y: .38, s: 'avail', n: 'Manager Memory', d: 'Los managers sobreviven a la Ascensión.', c: 'Coste: 320 DM' },
+      { x: .46, y: .34, s: 'avail', n: 'Tap Resonance', d: 'El tap escala con tu mejor generador.', c: 'Coste: 180 DM' },
+      { x: .78, y: .38, s: 'avail', n: 'Deep Reserves II', d: 'Tope offline 8 h → 24 h.', c: 'Coste: 410 DM' },
+      { x: .32, y: .16, s: 'far', n: 'Quantum Buyer', d: 'Auto-compra inteligente entre tiers.', c: 'Rama distante' },
+      { x: .62, y: .14, s: 'far', n: 'Event Horizon', d: 'La fórmula de DM gana un exponente.', c: 'Rama distante' },
+    ];
+    const links = [[0,1],[0,2],[1,3],[1,4],[2,5],[3,6],[4,6],[4,7],[5,7]];
+    let sel = 0, px = 0, py = 0;
+    const paint = () => {
+      const r = cv.getBoundingClientRect();
+      cv.width = r.width * devicePixelRatio; cv.height = r.height * devicePixelRatio;
+      cx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      const W = r.width, H = r.height;
+      cx.clearRect(0, 0, W, H);
+      for (const [a, b] of links) {
+        const A = nodes[a], B = nodes[b];
+        const lit = A.s === 'owned' && B.s !== 'far';
+        cx.strokeStyle = lit ? 'rgba(255,225,86,.55)' : 'rgba(139,167,191,.18)';
+        cx.lineWidth = lit ? 1.6 : 1;
+        cx.beginPath(); cx.moveTo(A.x * W, A.y * H); cx.lineTo(B.x * W, B.y * H); cx.stroke();
+      }
+      nodes.forEach((nd, i) => {
+        const x = nd.x * W, y = nd.y * H;
+        const R = nd.s === 'owned' ? 11 : 9;
+        if (i === sel) { cx.beginPath(); cx.arc(x, y, R + 7, 0, 6.2832); cx.strokeStyle = 'rgba(248,249,255,.8)'; cx.lineWidth = 1; cx.stroke(); }
+        cx.beginPath(); cx.arc(x, y, R, 0, 6.2832);
+        if (nd.s === 'owned') { cx.fillStyle = '#ffe156'; cx.fill(); }
+        else if (nd.s === 'avail') { cx.fillStyle = 'rgba(155,93,229,.18)'; cx.fill(); cx.strokeStyle = '#9b5de5'; cx.lineWidth = 1.6; cx.stroke(); }
+        else { cx.fillStyle = 'rgba(139,167,191,.10)'; cx.fill(); cx.strokeStyle = 'rgba(139,167,191,.35)'; cx.lineWidth = 1; cx.stroke(); }
+      });
+    };
+    const pick = (e) => {
+      const r = cv.getBoundingClientRect();
+      const mx = e.clientX - r.left, my = e.clientY - r.top;
+      let best = -1, bd = 1e9;
+      nodes.forEach((nd, i) => {
+        const dx = nd.x * r.width - mx, dy = nd.y * r.height - my, d = dx * dx + dy * dy;
+        if (d < bd) { bd = d; best = i; }
+      });
+      if (bd < 38 * 38 && best !== sel) {
+        sel = best;
+        const nd = nodes[sel];
+        panel.innerHTML = '<h4>' + nd.n + '</h4><p>' + nd.d + '</p><div class="cost num">' + nd.c + '</div>';
+        paint();
+      }
+    };
+    cv.addEventListener('pointermove', pick);
+    cv.addEventListener('pointerdown', pick);
+    addEventListener('resize', paint);
+    paint();
+  })();
+
+  // ------------------------------------------------ rail nav -------
+  (() => {
+    const ids = ['vision','hud','epocas','ascension','darkmatter','shop','estado'];
+    const dots = document.querySelectorAll('.rail a');
+    const obs = new IntersectionObserver((es) => {
+      es.forEach((e) => {
+        if (!e.isIntersecting) return;
+        const i = ids.indexOf(e.target.id);
+        dots.forEach((d, j) => d.classList.toggle('on', i === j));
+      });
+    }, { rootMargin: '-40% 0px -50% 0px' });
+    ids.forEach((id) => obs.observe(document.getElementById(id)));
+  })();
+</script>

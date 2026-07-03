@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#060a14" />
+    <title>Stellar Forge — Demo Vertical Slice</title>
+    <!--
+      Demo vertical slice entry (pre-E3). Layer contract per ADR-0009:
+      #game-root hosts the Phaser canvas (world + Forge, z-bottom, opaque);
+      #hud-overlay is the SIBLING vanilla-DOM HUD chrome (z-top,
+      pointer-events: none on the container — interactive elements opt back in).
+      The composition root (demo/main.ts) constructs and wires both (ADR-0006).
+    -->
+    <script type="module" crossorigin src="/stellar-forge-demo/assets/index-CRuaqiNf.js"></script>
+    <link rel="modulepreload" crossorigin href="/stellar-forge-demo/assets/phaser--MIaX3ER.js">
+    <link rel="stylesheet" crossorigin href="/stellar-forge-demo/assets/index-CsgQXdya.css">
+  </head>
+  <body>
+    <div id="game-root"></div>
+    <div id="hud-overlay" aria-live="off"></div>
+  </body>
+</html>
