@@ -63,7 +63,7 @@ var Li=Object.defineProperty;var ds=s=>{throw TypeError(s)};var Pi=(s,e,t)=>e in
       "baseCost": 1000000,
       "costMultiplier": 1.14,
       "baseOutput": 500.0,
-      "enabled": false
+      "enabled": true
     },
     {
       "tier": 7,
@@ -73,7 +73,7 @@ var Li=Object.defineProperty;var ds=s=>{throw TypeError(s)};var Pi=(s,e,t)=>e in
       "baseCost": 10000000,
       "costMultiplier": 1.15,
       "baseOutput": 2500.0,
-      "enabled": false
+      "enabled": true
     },
     {
       "tier": 8,
@@ -83,7 +83,7 @@ var Li=Object.defineProperty;var ds=s=>{throw TypeError(s)};var Pi=(s,e,t)=>e in
       "baseCost": 100000000,
       "costMultiplier": 1.16,
       "baseOutput": 12500.0,
-      "enabled": false
+      "enabled": true
     },
     {
       "tier": 9,
@@ -93,7 +93,7 @@ var Li=Object.defineProperty;var ds=s=>{throw TypeError(s)};var Pi=(s,e,t)=>e in
       "baseCost": 1000000000,
       "costMultiplier": 1.17,
       "baseOutput": 62500.0,
-      "enabled": false
+      "enabled": true
     }
   ],
   "upgrades": {
